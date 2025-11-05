@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examenrichtlijnen</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="image-container">
+  <img src="https://examenrichtlijnen.arteveldehogeschool.be/examenrichtlijnen/slide.jpg" alt="Examenrichtlijnen">
+</div>
+
+<div class="status-bar not-started" id="statusBar">
+  Examen nog niet gestart
+</div>
+
+<div class="datetime-bar" id="datetime">
+  Laden...
+</div>
+
+<button class="settings-button" id="settingsButton" aria-label="Instellingen">
+  ⚙️
+</button>
+
+<div class="settings-modal" id="settingsModal">
+  <div class="settings-content">
+    <h2>Examen Instellingen</h2>
+    
+    <div class="form-group">
+      <label for="startTime">Starttijd Examen:</label>
+      <input type="time" id="startTime" value="09:00">
+      <div class="help-text">Kies wanneer het examen begint</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="submissionInterval">Afgeefinterval (minuten):</label>
+      <input type="number" id="submissionInterval" value="10" min="1" max="60">
+      <div class="help-text">Elke hoeveel minuten mogen studenten afgeven (na de eerste 30 minuten)</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="submissionDuration">Duur afgeefmoment (minuten):</label>
+      <input type="number" id="submissionDuration" value="1" min="1" max="10">
+      <div class="help-text">Hoe lang duurt elk afgeefmoment</div>
+    </div>
+    
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="statusBarToggle">
+        Statusbalk tonen
+      </label>
+      <div class="help-text">Toon de statusbalk tijdens het examen</div>
+    </div>
+    
+    <div class="button-group">
+      <button class="btn btn-secondary" id="cancelButton">Annuleren</button>
+      <button class="btn btn-primary" id="saveButton">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
