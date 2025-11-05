@@ -150,7 +150,7 @@ function calculateExamStatus() {
   if (cyclePosition < appState.submissionWindowDuration) {
     return {
       state: 'can-submit',
-      message: 'Je mag nu AFGEVEN en rechtstaan!'
+      message: 'Je mag nu afgeven!'
     };
   }
 
