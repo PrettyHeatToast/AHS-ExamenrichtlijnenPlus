@@ -27,11 +27,15 @@ body {
     width: 100%;
     height: calc(100vh - var(--datetime-bar-height) - var(--status-bar-height));
     overflow: hidden;
-    background-image: url('SLIDE.jpg');
+    background-image: url('SLIDE_NL.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     transition: height .3s ease
+}
+
+.image-container.lang-en {
+    background-image: url('SLIDE_EN.jpg')
 }
 
 .image-container.status-bar-hidden {
@@ -131,6 +135,34 @@ body {
 }
 
 .settings-button:active {
+    transform: scale(.95)
+}
+
+.language-button {
+    position: fixed;
+    top: 20px;
+    right: 82px;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(255, 255, 255, .9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-family: var(--font-family-base);
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    z-index: 100;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, .3);
+    transition: all .3s ease
+}
+
+.language-button:hover {
+    background-color: rgba(255, 255, 255, 1);
+    transform: scale(1.1)
+}
+
+.language-button:active {
     transform: scale(.95)
 }
 

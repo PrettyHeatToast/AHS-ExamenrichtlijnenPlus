@@ -4,8 +4,33 @@ const appState = {
   submissionInterval: 10, // minutes
   initialWaitTime: 30, // minutes
   submissionWindowDuration: 1, // minutes (configurable)
-  statusBarEnabled: false // default: hidden
+  statusBarEnabled: false, // default: hidden
+  language: 'nl' // 'nl' or 'en'
 };
+
+// Student-facing texts per language
+const translations = {
+  nl: {
+    locale: 'nl-BE',
+    notStarted: 'Examen nog niet gestart',
+    canSubmit: 'Je mag nu afgeven!',
+    nextSubmission: (n) => `Volgende afgeefmoment over ${n} ${n === 1 ? 'minuut' : 'minuten'}`,
+    toggleLabel: 'EN',
+    toggleAria: 'Switch to English'
+  },
+  en: {
+    locale: 'en-GB',
+    notStarted: 'Exam not started yet',
+    canSubmit: 'You may submit now!',
+    nextSubmission: (n) => `Next submission moment in ${n} ${n === 1 ? 'minute' : 'minutes'}`,
+    toggleLabel: 'NL',
+    toggleAria: 'Schakel naar Nederlands'
+  }
+};
+
+function t() {
+  return translations[appState.language];
+}
 
 // Parse URL parameters
 function parseURLParameters() {
@@ -47,6 +72,14 @@ function parseURLParameters() {
     params.show = (showParam === '1' || showParam === 'true');
   }
 
+  // Parse language (nl or en)
+  if (urlParams.has('lang')) {
+    const langParam = urlParams.get('lang').toLowerCase();
+    if (translations[langParam]) {
+      params.lang = langParam;
+    }
+  }
+
   return params;
 }
 
@@ -69,6 +102,9 @@ function updateURL() {
 
   // Add show status (1 or 0)
   params.set('show', appState.statusBarEnabled ? '1' : '0');
+
+  // Add language
+  params.set('lang', appState.language);
 
   // Update URL without reloading page
   const newURL = `${window.location.pathname}?${params.toString()}`;
@@ -110,7 +146,7 @@ function updateDateTime() {
     minute: '2-digit',
     second: '2-digit'
   };
-  document.getElementById('datetime').textContent = now.toLocaleString('nl-BE', options);
+  document.getElementById('datetime').textContent = now.toLocaleString(t().locale, options);
 }
 
 // Calculate exam status
@@ -118,7 +154,7 @@ function calculateExamStatus() {
   if (!appState.examStartTime) {
     return {
       state: 'not-started',
-      message: 'Examen nog niet gestart'
+      message: t().notStarted
     };
   }
 
@@ -129,7 +165,7 @@ function calculateExamStatus() {
   if (minutesSinceStart < 0) {
     return {
       state: 'not-started',
-      message: 'Examen nog niet gestart'
+      message: t().notStarted
     };
   }
 
@@ -138,7 +174,7 @@ function calculateExamStatus() {
     const minutesRemaining = Math.ceil(appState.initialWaitTime - minutesSinceStart);
     return {
       state: 'waiting',
-      message: `Volgende afgeefmoment over ${minutesRemaining} ${minutesRemaining === 1 ? 'minuut' : 'minuten'}`
+      message: t().nextSubmission(minutesRemaining)
     };
   }
 
@@ -150,7 +186,7 @@ function calculateExamStatus() {
   if (cyclePosition < appState.submissionWindowDuration) {
     return {
       state: 'can-submit',
-      message: 'Je mag nu afgeven!'
+      message: t().canSubmit
     };
   }
 
@@ -158,7 +194,7 @@ function calculateExamStatus() {
   const minutesUntilNext = Math.ceil(appState.submissionInterval - cyclePosition);
   return {
     state: 'waiting',
-    message: `Volgende afgeefmoment over ${minutesUntilNext} ${minutesUntilNext === 1 ? 'minuut' : 'minuten'}`
+    message: t().nextSubmission(minutesUntilNext)
   };
 }
 
@@ -187,6 +223,25 @@ function updateStatusBar() {
 
   // Update message
   statusBar.textContent = status.message;
+}
+
+// Apply current language to slide, toggle button and bars
+function applyLanguage() {
+  document.documentElement.lang = appState.language;
+  document.querySelector('.image-container').classList.toggle('lang-en', appState.language === 'en');
+
+  const languageButton = document.getElementById('languageButton');
+  languageButton.textContent = t().toggleLabel;
+  languageButton.setAttribute('aria-label', t().toggleAria);
+
+  updateDateTime();
+  updateStatusBar();
+}
+
+function toggleLanguage() {
+  appState.language = appState.language === 'nl' ? 'en' : 'nl';
+  updateURL();
+  applyLanguage();
 }
 
 // Settings modal handlers
@@ -226,6 +281,7 @@ function saveSettings() {
 }
 
 // Event listeners
+document.getElementById('languageButton').addEventListener('click', toggleLanguage);
 document.getElementById('cancelButton').addEventListener('click', closeSettingsModal);
 document.getElementById('saveButton').addEventListener('click', saveSettings);
 
@@ -272,14 +328,17 @@ function initializeFromURL() {
     appState.statusBarEnabled = urlParams.show;
   }
 
+  if (urlParams.lang !== undefined) {
+    appState.language = urlParams.lang;
+  }
+
   // Initialize start time (from URL or default)
   initializeDefaultStartTime();
 }
 
 // Initialize
 initializeFromURL();
-updateDateTime();
-updateStatusBar();
+applyLanguage();
 
 // Update every second
 setInterval(() => {
