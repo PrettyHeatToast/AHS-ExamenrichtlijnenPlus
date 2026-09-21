@@ -28,7 +28,7 @@ body {
     height: calc(100vh - var(--datetime-bar-height) - var(--status-bar-height));
     overflow: hidden;
     background-image: url('SLIDE_NL.jpg');
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
     transition: height .3s ease
